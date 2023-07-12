@@ -37,5 +37,5 @@ def main(ref_file_path, bam_file_path):
 
 if __name__ == "__main__":
     ref_file_path = "/home/databases/genomes/Homo_sapiens/hs37d5/hs37d5.fa"
-    bam_file_path = "/home/projects/marthe/tmp/test.bam"
+    bam_file_path = "/home/projects2/marthe/tmp/test.bam"
     main(ref_file_path, bam_file_path)
