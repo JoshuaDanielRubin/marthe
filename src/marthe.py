@@ -1,13 +1,12 @@
 #!/usr/bin/env python
-
 import subprocess
 from optparse import OptionParser
 import sys, os, random
-import time 
+import time
 import numpy as np
 import re
 import copy
-import tempfile 
+import tempfile
 from tqdm import tqdm
 from math import exp, log
 from scipy.stats import poisson
@@ -45,8 +44,6 @@ group_m.add_option("--gc",                   dest="gcfile",       help="File con
 group_m.add_option("-c", "--conf",           dest="configfile",   help="Configuration for various conditions file to use for species/build default: "+str(pathofconfig)+"", default=pathofconfig, type="string") 
 group_m.add_option("--winsize",              dest="winsize",      help="Size of genomic windows, default is 1Mbp",             default=1000000, type="int") 
 group_m.add_option("--mismap",               dest="mismappingrate", help="Mismapping rate , default is "+str(mismappingrate)+"",            default=mismappingrate, type="float") 
-
-
 parser.add_option_group(group_m)
 
 group_i = optparse.OptionGroup(parser, "To improve options",
@@ -54,7 +51,6 @@ group_i = optparse.OptionGroup(parser, "To improve options",
 group_i.add_option("--map",                  dest="mappability",     help="Use a mappability map in BED format (Recommended)",   default=None,    type="string") 
 group_i.add_option("--minlen",               dest="minlen",       help="Minimum length of DNA fragment",             default=35, type="int") 
 parser.add_option_group(group_i)
-
 
 group_t = optparse.OptionGroup(parser, "Technical options",
                                 "These are the options in order to improve the performance")
@@ -97,8 +93,6 @@ else:
         sys.stderr.write("\nERROR: The tabix index for the mappability does not exist.\n") 
         sys.exit(1) 
 
-
-
 mismappingrate=options.mismappingrate 
 
 #detecting programs
@@ -118,8 +112,6 @@ if(not os.path.exists(options.ref+".fai")):
     sys.stderr.write("\nWarning index file:"+options.ref+".fai does not exist, we will create it, make sure you have permissions to write in that directory. If not, create a symlink.\n") 
     cmdindex = samtoolscmd + " faidx " + options.ref 
     subprocess.run(cmdindex, shell=True, universal_newlines=True)
-
-
 
 chrnames   = {} 
 chrranges  = [] 
@@ -190,7 +182,6 @@ while True:
     
     else:
         args_list = args
-
 
 
     if( options.resume == None):
@@ -266,8 +257,6 @@ while True:
 
             fileHandleLC.write(command +  "\n")
 
-
-
         fileHandleIndex.close()
         fileHandleLC.close()
         
@@ -286,27 +275,20 @@ while True:
         #cmdIndex="cat " + tfm + "/listcommands1.txt | parallel -j "+str(options.threads)
 
         print("Counting the number of reads")
+
         if options.hpc:
-            print ("Please run the commands manually either using:")
-            print ("cat " + tfm + "/listcommands1.txt | parallel -j "+str(options.threads))
-            print ("on the use a batch/queueing system to launch:")
-            print ("cat " + tfm + "/listcommands1.txt | sbatch ...\n")
-            print ("Once commands are done, rerun with:\n")
+            print("Please run the commands manually either using:\ncat " + tfm + "/listcommands1.txt | parallel -j " + str(options.threads) + "\non the use a batch/queueing system to launch:\ncat " + tfm + "/listcommands1.txt | sbatch ...\n\nOnce commands are done, rerun with:\n")
             if options.file:
-                print ("python3 " + "/".join(pathofexecarray)+"/src/marthe.py   -r " + options.ref + "  -c " + str(options.configfile) + " -F --resume " + tfm + " --tmpfolder " + options.tmpfolder + " --hpc  -o " + options.resultso + " " + args[0]  + '\n')
-
+                print("python3 " + "/".join(pathofexecarray) + "/src/marthe.py -r " + options.ref + " -c " + str(options.configfile) + " -F --resume " + tfm + " --tmpfolder\n")
             else:
-                print ("python3 " + "/".join(pathofexecarray)+"/src/marthe.py   -r " + options.ref + "  -c " + str(options.configfile) + " --resume " + tfm + " --tmpfolder " + options.tmpfolder + " --hpc  -o " + options.resultso + " " + args[0]  + '\n')
-            print ("exiting")
-            break 
+                print("python3 " + "/".join(pathofexecarray) + "/src/marthe.py -r " + options.ref + " -c " + str(options.configfile) + " --resume " + tfm + " --tmpfolder\n")
+        print("exiting")
+        break
         else:
-            print("Launching commands:\n" + cmdtolaunch)
             subprocess.run(cmdtolaunch, shell=True, universal_newlines=True)
-
-            options.resume = tfm 
+            options.resume = tfm
             print(options.resume)
-            continue  #skip to next block and pretend it is a resume
-
+            continue
 
     else: #resume, need to parse the count
 
@@ -314,7 +296,7 @@ while True:
         print( "Generating listcommands2.txt")
 
         if options.mappability != None:
-            fileHandleScore = open("" + tfm + "/listcommandsCount.txt", 'w' )  
+            fileHandleScore = open("" + tfm + "/listcommandsCount.txt", 'w' )
             map_scores_file = tfm + "/map_score.txt"
 
             for r in chrranges:
@@ -323,8 +305,6 @@ while True:
                 cmd_sum =  "awk '{s+=$1} END {print (s*"+ str(options.minlen) + ")/" + str(options.winsize) + "}' >> " + map_scores_file
                 command = cmd_tabix + cmd_diff + cmd_sum
                 #subprocess.run(command, shell=True, universal_newlines=True)
-            
-
 
         fileHandleLC = open ( "" + tfm + "/listcommands2.txt",   'w' ) 
 
@@ -346,8 +326,6 @@ while True:
         
         cmdtolaunch="cat "+tfm+"/listcommands2.txt |  nice -19 parallel --slf /home/projects/marthe/marthe/data/list_serv"
         
-
-
         print("listcommands2.txt generated")
 
         if(options.hpc):
