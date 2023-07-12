@@ -39,7 +39,7 @@ def checkLineJump(string):
     return string
 
 
-def gcBins(data):  
+def gcBins(data):
     """
     It creates a dictionary of GC bins and stores the mean of the counts for each bin
 
@@ -260,8 +260,6 @@ def filter_file (file1, file2, conditions_index):
         counter+=1
     infile.close()
     outfile.close()
-
-
 
 def merge_files(directory_name, map_score_list, index, corrected_file):
     """

@@ -221,8 +221,6 @@ while True:
 
                 #sys.exit(0) 
 
-
-
             #Then it checks which BAM (or converted CRAM) do not have index
             #Write in a list and do in parallel
             if(not os.path.exists(bamfile+".bai")):
